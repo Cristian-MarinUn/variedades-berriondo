@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Resultados de búsqueda{% endblock %}
+
+{% block content %}
+<div class="container-fluid main">
+
+    <!-- Product Detail Section -->
+    <div class="container product-detail">
+        <div class="row">
+            <!-- Imagen del producto -->
+            <div class="col-md-6">
+                <img src="{% if producto.imagen %}{{ producto.imagen.url }}{% else %}{% static 'img/placeholder.png' %}{% endif %}"
+                    alt="Producto" class="product-image">
+            </div>
+
+            <!-- Información del producto -->
+            <div class="col-md-6">
+                <div class="card product-card p-4">
+                    <div class="row categories">
+                        <h2 class="card-title">{{producto.nombre}} <p class="h2 text-primary">{{producto.precio}} $</p>
+                        </h2>
+                        <!-- Categorías -->
+
+                        <div class="col-12">
+                            <span>{{producto.categoria}}</span>
+                        </div>
+                    </div>
+
+
+
+
+                    <!-- Descripción -->
+                    <div class="row description mt-4">
+                        <div class="col-12">
+                            <h2>Descripción:</h2>
+                            <p>
+                                {{producto.descripcion}}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Button zum Hinzufügen zum Warenkorb -->
+                    <form method="POST" action="{% url 'add_to_cart' producto.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-lg mt-3">
+                            <i class="fa-solid fa-cart-shopping"></i> Añadir al carrito
+                        </button>
+                    </form>
+
+                    <!-- trigger modal -->
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#miModal" style="text-decoration: none;">
+                        Regresar sin comprar
+                    </a>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="miModal" tabindex="-1"
+                        aria-labelledby="modalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg"> <!-- Modal grande -->
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <!-- Sección principal del modal -->
+                                    <div class="d-flex">
+                                        <!-- Imagen a la izquierda -->
+                                        <div class="col-5">
+                                            <img src="{% static 'img/berriondo/Berriondo_cara_enfadado.png' %}"
+                                                alt="Imagen" class="img-fluid rounded-start" width="200">
+                                        </div>
+                                        <!-- Mensaje a la derecha -->
+                                        <div class="col-5 d-flex flex-column justify-content-center p-3">
+                                            <h5 class="modal-title" id="modalLabel">¿En serio se me va a ir sin comprar?
+                                            </h5>
+                                            <p>Me va a hacer cogerle tristeza, mas bien vea que le tengo mas cosas
+                                                traidas
+                                                de donde traen las mejoras cosas, 1A puespuespuespuespues</p>
+                                            <button type="button" class="btn btn-secondary mt-2"
+                                                data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sección del carrusel -->
+                                    <div class="mt-4">
+                                        <h5 class="text-center">🎁 Más productos recomendados 🎁</h5>
+                                        <div id="carruselProductos" class="carousel slide" data-bs-ride="carousel">
+                                            <div class="carousel-inner">
+                                                {% for producto_similar in productos_similares %}
+                                                <!-- Producto 1 -->
+                                                <div class="carousel-item {% if forloop.first %}active{% endif %} text-center">
+                                                    <img src="{% if producto_similar.imagen %}{{ producto_similar.imagen.url }}{% else %}{% static 'img/placeholder.png' %}{% endif %}"
+                                                        class="d-block mx-auto rounded" alt="Producto 1" width="150">
+                                                    <h6 class="mt-2">{{ producto_similar.nombre }}</h6>
+                                                    <a href="{% url 'product_detail' producto_similar.id %}" class="btn btn-primary btn-sm">Ver más</a>
+                                                </div>
+                                                {% endfor %}
+                                               
+                                            </div>
+                                            <!-- Controles del carrusel -->
+                                            <button class="carousel-control-prev" type="button"
+                                                data-bs-target="#carruselProductos" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button"
+                                                data-bs-target="#carruselProductos" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Suggestions Section -->
+    <div class="container suggestions">
+        <h3>Productos que te pueden interesar también:</h3>
+
+        {% for producto_similar in productos_similares %}
+        <a href="{% url 'product_detail' producto_similar.id %}">
+            <div class="suggestion">
+                <img src="{% if producto_similar.imagen %}{{ producto_similar.imagen.url }}{% else %}{% static 'img/placeholder.png' %}{% endif %}"
+                    class="card-img-top" alt="{{ producto.nombre }}" alt="Imagen del producto">
+                <h4>{{producto_similar.nombre}}</h4>
+                <p>Precio: ${{producto_similar.precio}}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

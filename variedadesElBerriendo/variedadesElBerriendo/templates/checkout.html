@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Checkout | Variedades el Berriondo{% endblock %}
+
+{% block content %}
+
+
+<div class="col-md-9">
+    <div class="main-content tab-content">
+        <div class="tab-pane fade show active">
+
+            <!-- overview del pedido como lista -->
+            <section class="profile-section bg-white p-4 rounded shadow-sm">
+                <h3>Pedido</h3>
+                <table class="table checkout-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    <tbody>
+                        {% for item in request.user.carrito_set.all %}
+                            <tr>
+                                <td>{{item.cantidad}} x {{ item.producto.nombre }} á ${{ item.producto.precio }}</td>
+                                <td>
+                                    <form method="POST" action="{% url 'añadir_otro' item.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="cantidad" value="{{ item.cantidad|add:1 }}">
+                                        <button type="submit" class="btn btn-success btn-sm">añadir uno más</button>
+                                    </form>
+                                <td>${{ item.subtotal}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-between align-items-center">
+                    <p><b>Precio total: ${{ total_price }}</b></p>
+                    
+                    <div class="btn btn-primary">
+                        <a href="{% url 'carrito' %}" class="btn btn-primary">Editar carrito</a>    
+                    </div>
+                </div>
+            </section>
+
+            <!--Método de pagar-->
+            <section class="profile-section bg-white p-4 rounded shadow-sm">
+                <h3>Método de pago</h3>
+<<<<<<< HEAD
+                <div> Tarjeta: {{payment}}</div>
+=======
+                <div> 
+                    {% if payment_methods %}
+                        {% for payment_method in payment_methods %}
+                            <p>Tarjeta de crédito: **** **** **** {{ payment_method.card_number|slice:"-4" }} {% if payment_method.is_preferred %}(Preferida){% endif %}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p>Aún no has añadido una dirección de entrega.</p>
+                    {% endif %}
+                    <a href="{% url 'payment_method_add' %}" class="btn btn-primary">Añadir método de pago</a>
+                </div>
+>>>>>>> 465c013ecd1ea7227c788c8ad37ce879cf880ee0
+            </section>
+
+            <!--Dirección de entrega-->
+            <section class="profile-section bg-white p-4 rounded shadow-sm">
+                <h3>Dirección de entrega</h3>
+<<<<<<< HEAD
+                <div> 1 - {{ address }}</div>
+=======
+                <div> 
+                    {% if addresses %}
+                        {% for address in addresses %}
+                            <p>{{ address.address }} {% if address.is_preferred %}(Preferida){% endif %}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p>Aún no has añadido una dirección de entrega.</p>
+                    {% endif %}
+                    <a href="{% url 'address_add' %}" class="btn btn-primary">Añadir dirección</a>
+                </div>
+            </section>
+>>>>>>> 465c013ecd1ea7227c788c8ad37ce879cf880ee0
+
+                <div class="d-flex justify-content-center mt-4">
+                    <form action="{% url 'procesar_compra' request.user.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Finalizar Compra</button>
+                    </form>
+                </div>
+            </section>
+       
+    </div>
+</div>
+
+
+{% endblock %}
